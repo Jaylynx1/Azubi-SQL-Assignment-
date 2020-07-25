@@ -89,8 +89,8 @@ AND NOW()::DATE-EXTRACT(DOW from NOW())::INTEGER)
 GROUP BY wallets.ledger_location, transfers.kind) as send_Volume_by_Country_and_Kind; 
 									   
 --#9
- --COUNT method is used here to get the number of transfers
- SELECT COUNT(transfers.source_wallet_id) AS Unique_Senders,COUNT(transfer_id) AS Transaction_count, transfers.kind AS Transfer_Kind, wallets.ledger_location AS Country, 
+ --COUNT method is used here to get the number of transfers with DISTINCT method to get UNIQUE Senders
+ SELECT COUNT(DISTINCT transfers.source_wallet_id) AS Unique_Senders,COUNT(transfer_id) AS Transaction_count, transfers.kind AS Transfer_Kind, wallets.ledger_location AS Country, 
  --SUM method is used here to get the total volume of the transfer amount
 sum(transfers.send_amount_scalar) AS Volume 
 FROM transfers 
