@@ -101,8 +101,8 @@ SELECT source_wallet_id, send_amount_scalar FROM transfers
 WHERE send_amount_currency = 'CFA' 
  -- to get the records which had send_amount_scalar being greater than 10,000,000: 
 AND (send_amount_scalar>10000000) 
- -- to get the records from LAST WEEK: 
-AND (transfers.when_created > (NOW() - INTERVAL '1 month'));								   
+ -- to get the records from LAST MONTH: 
+AND (EXTRACT(MONTH FROM when_created) - EXTRACT(Month FROM NOW())-1);								   
 
 								   
 									   
