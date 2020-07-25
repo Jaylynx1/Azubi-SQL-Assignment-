@@ -35,7 +35,9 @@ SELECT
     WHERE ((amount < 0) OR (amount > 0)) 
 									   
 	--1 week condition:
-	AND (agent_transactions.when_created > (NOW() - INTERVAL '1 week'))
+AND (agent_transactions.when_created BETWEEN 
+NOW()::DATE-EXTRACT(DOW FROM NOW())::INTEGER-7 
+AND NOW()::DATE-EXTRACT(DOW from NOW())::INTEGER)
     GROUP BY agent_id
  	-- to group by the CASE created earlier:
     GROUP BY (net_value > 0);
@@ -50,7 +52,9 @@ FROM ( Select agents.city AS City, count(agent_transactions.atx_id) AS Volume FR
 INNER JOIN agent_transactions 
 ON agents.agent_id = agent_transactions.agent_id
 	  -- to get the records from LAST WEEK:
-where (agent_transactions.when_created > (NOW() - INTERVAL '1 week'))
+WHERE (agent_transactions.when_created BETWEEN 
+NOW()::DATE-EXTRACT(DOW FROM NOW())::INTEGER-7 
+AND NOW()::DATE-EXTRACT(DOW from NOW())::INTEGER)
 	  --The data is grouped according to the respective Cities using  GROUP BY:
 GROUP BY agents.city) as atx_volume_summary; 
 									   
@@ -63,7 +67,9 @@ FROM ( Select agents.city AS City, agents.country AS Country, count(agent_transa
 INNER JOIN agent_transactions 
 ON agents.agent_id = agent_transactions.agent_id
 	-- to get the records from LAST WEEK: 
-where (agent_transactions.when_created > (NOW() - INTERVAL '1 week'))
+WHERE (agent_transactions.when_created BETWEEN 
+NOW()::DATE-EXTRACT(DOW FROM NOW())::INTEGER-7 
+AND NOW()::DATE-EXTRACT(DOW from NOW())::INTEGER)
 	--The data is grouped according to the respective Countries first, then the Cities using  GROUP BY:
 GROUP BY agents.country,agents.city) as atx_volume_summary_with_Country;	
 									   
@@ -76,7 +82,9 @@ FROM transfers.kind AS Kind, wallets.ledger_location AS Country, sum(transfers.s
 INNER JOIN wallets 
 ON transfers.source_wallet_id = wallets.wallet_id
 	-- to get the records from LAST WEEK: 
-where (transfers.when_created > (NOW() - INTERVAL '1 week'))
+WHERE (transfers.when_created BETWEEN 
+NOW()::DATE-EXTRACT(DOW FROM NOW())::INTEGER-7 
+AND NOW()::DATE-EXTRACT(DOW from NOW())::INTEGER)
 	--The data is grouped according to the respective Countries first(ledger_location), then the transfer kind using  GROUP BY:								   
 GROUP BY wallets.ledger_location, transfers.kind) as send_Volume_by_Country_and_Kind; 
 									   
@@ -90,7 +98,9 @@ FROM transfers
 INNER JOIN wallets 
 ON transfers.source_wallet_id = wallets.wallet_id
   -- to get the records from LAST WEEK: 
-where (transfers.when_created > (NOW() - INTERVAL '1 week'))	
+WHERE transfers.when_created BETWEEN 
+NOW()::DATE-EXTRACT(DOW FROM NOW())::INTEGER-7 
+AND NOW()::DATE-EXTRACT(DOW from NOW())::INTEGER                                   
   --The data is grouped according to the respective Countries first(ledger_location), then the transfer kind using  GROUP BY:
 GROUP BY wallets.ledger_location, transfers.kind; 		
 									   
